@@ -1,0 +1,30 @@
+{
+  "name": "Python 3 Flask",
+  "image": "mcr.microsoft.com/devcontainers/python:1-3.11-bookworm",
+  "customizations": {
+    "codespaces": {
+      "openFiles": [
+        "README.md",
+        "backend.py"
+      ]
+    },
+    "vscode": {
+      "settings": {},
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance"
+      ]
+    }
+  },
+  "updateContentCommand": "[ -f packages.txt ] && sudo apt update && sudo apt upgrade -y && sudo xargs apt install -y <packages.txt; [ -f requirements.txt ] && pip3 install --user -r requirements.txt; echo '✅ Packages installed and Requirements met'",
+  "postAttachCommand": "python3 backend.py",
+  "portsAttributes": {
+    "5000": {
+      "label": "Flask Backend",
+      "onAutoForward": "openBrowser"
+    }
+  },
+  "forwardPorts": [
+    5000
+  ]
+}

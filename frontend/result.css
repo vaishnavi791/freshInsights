@@ -1,0 +1,95 @@
+body {
+  margin: 0;
+  font-family: 'Italiana', serif;
+  background-color: #e6f9e6; /* pastel green */
+}
+
+/* Header */
+.site-header {
+  display: flex;
+  align-items: center;
+  background-color: #888;
+  color: white;
+  padding: 10px 20px;
+}
+
+.brand-logo {
+  width: 60px;
+  margin-right: 15px;
+}
+
+.brand-name {
+  font-size: 1.8rem;
+  font-weight: bold;
+}
+
+/* Result Section */
+.result-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 80vh;
+}
+
+.image-section {
+  background-color: #f6fff6;
+  padding: 20px;
+  border-radius: 12px;
+  text-align: center;
+}
+
+.image-section img {
+  max-width: 300px;
+  max-height: 300px;
+  margin-bottom: 15px;
+  border-radius: 8px;
+}
+
+/* Prediction Box */
+.prediction-box {
+  background-color: #d8f3dc;
+  color: #1b4332;
+  border-radius: 12px;
+  padding: 15px;
+  margin-top: 10px;
+}
+
+.prediction-box p {
+  margin: 5px 0;
+  font-size: 1.1rem;
+}
+
+.confidence-bar {
+  width: 100%;
+  background-color: #e6f2e6;
+  border-radius: 8px;
+  height: 18px;
+  margin-bottom: 10px;
+  overflow: hidden;
+}
+
+.confidence-fill {
+  height: 100%;
+  border-radius: 8px;
+  background-color: #40916c;
+  text-align: right;
+  color: white;
+  font-size: 0.9rem;
+  padding-right: 5px;
+  line-height: 18px;
+}
+
+.action-btn {
+  margin-top: 15px;
+  padding: 10px 15px;
+  border-radius: 25px;
+  border: none;
+  background: #dfe38b;
+  cursor: pointer;
+}
+
+.action-btn:hover {
+  background-color: #7cb518;
+  color: white;
+  transform: scale(1.05);
+}

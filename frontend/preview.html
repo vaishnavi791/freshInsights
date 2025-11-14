@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FreshInsight</title>
+  <link rel="stylesheet" href="preview.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Italiana&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Header section -->
+  <header class="site-header">
+    <div class="top-bar">
+      <img src="Logo.png" alt="Brand Logo" class="brand-logo">
+      <span class="brand-name">FreshInsight</span>
+    </div>
+
+    <div class="icon-container">
+      <button class="icon-btn" id="mailIcon">✉︎</button>
+      <button class="icon-btn" id="githubIcon">🐱</button>
+      <button class="icon-btn" id="linkedinIcon">🔗</button>
+    </div>
+    <div class = "info-btn">
+      <button class="nav-btn" onclick="goHome()">Home</button>
+      <button class="nav-btn" onclick="goContact()">Contact</button>
+   </div>
+    <div id="infoBox" class="info-box"></div>
+  </header>
+
+  <!-- Background -->
+  <section id="preview" class="page active" 
+  style="background: url('bg.png') center/cover no-repeat; display: flex; 
+  flex-direction: column; justify-content: center; align-items: center; height: 100vh; text-align: center;">
+
+    <!-- Upload/Scan Section -->
+   <section class="scan-section">
+    <div class="scan-box">
+      <h2>Please provide the image</h2>
+      <!-- Upload -->
+      <input type="file" id="uploadFile" accept="image/*" hidden>
+      
+    <!-- Upload / Camera button -->
+    <button class="action-btn" onclick="document.getElementById('uploadFile').click()">Upload Image</button>
+    <button class="action-btn" onclick="openCamera()">Capture Image</button>
+
+    <!-- Video feed for camera -->
+    <video id="cameraFeed" autoplay playsinline style="display:none; width:300px; margin-top:15px; border-radius:10px;"></video>
+
+    <!-- Retake -->
+    <button class="action-btn retake-btn" onclick="retakeImage()">Retake</button>
+
+    <!-- Submit -->
+    <button class="action-btn" onclick="submitImage()">Submit</button>
+  </div>
+   </section>
+   
+   <!-- External JS -->
+    <script src="preview.js"></script>
+  </body>
+</html>

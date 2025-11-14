@@ -1,0 +1,142 @@
+/* Header */
+.site-header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background-color: rgb(123, 123, 123);
+  padding: 10px;
+}
+
+.top-bar {
+  display: flex;
+  align-items: center;
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+}
+
+.brand-logo {
+  width: 80px;
+  height: auto;
+  margin-right: 10px;
+}
+
+.brand-name {
+  font-size: 2rem;
+  font-style: italic;
+  font-family: 'Playfair Display', serif;
+  font-weight: bold;
+  color: white;
+  margin-bottom: 10px;
+}
+
+.icon-container {
+  display: flex;
+  gap: 15px;
+  margin-left: auto;
+}
+
+.icon-btn {
+  font-size: 1.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.icon-btn:hover {
+  transform: scale(1.2);
+}
+
+.info-box {
+  position: absolute;
+  top: 60px;
+  right: 20px;
+  background: #fff;
+  border: 1px solid #ccc;
+  padding: 10px;
+  display: none;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+/* Container beside social icons */
+.info-btn {
+  display: flex;
+  gap: 10px;
+  margin-left: 15px;
+}
+
+/* Small grey buttons */
+.nav-btn {
+  padding: 5px 12px;
+  font-size: 0.9rem;
+  border: none;
+  border-radius: 6px;
+  background-color: #555;   /* dark grey */
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.nav-btn:hover {
+  background-color: #777;   /* lighter grey on hover */
+  box-shadow: 0 0 8px rgba(0,0,0,0.3);
+  transform: scale(1.05);
+}
+
+/* Centered Scan Section */
+.scan-section {
+  position:absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+}
+
+.scan-box {
+  position: absolute;       /* required for centering */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* ✅ perfect centering */
+  background: rgba(109, 106, 106, 0.502); /* transparent grey */
+  padding: 40px;
+  border-radius: 25px;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  color: white;
+  height: 350px;
+  width: 300px;
+  font-family: 'Italiana', serif;
+}
+
+
+h2 {
+  margin-bottom: 20px;
+  font-size: 24px;
+  color: black;
+}
+
+/* Buttons */
+.action-btn {
+  display: block;
+  width: 200px;
+  margin: 15px auto;
+  padding: 12px 25px;
+  border: none;
+  border-radius: 25px;
+  background: #7cb518;
+  color: black;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.action-btn:hover {
+  color: white;
+  box-shadow: 0 0 15px rgb(0,60,0);
+  transform: scale(1.05);
+}
+
+.retake-btn {
+  width: 120px;
+  padding: 8px;
+  font-size: 14px;
+}
