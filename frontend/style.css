@@ -190,3 +190,30 @@
   transform: scale(1.05);
   box-shadow: 0 0 35px rgb(107, 255, 107);
 }
+
+/* Navigation buttons */
+.info-btn {
+  display: flex;
+  gap: 10px;
+  margin-left: auto;
+}
+
+.nav-btn {
+  background: #99ff33;
+  color: #0c6004;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'Italiana', serif;
+}
+
+.nav-btn:hover {
+  background: #0c6004;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}

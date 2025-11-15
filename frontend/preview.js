@@ -157,3 +157,12 @@ function goHome() {
 function goContact() {
   window.location.href = 'index.html#contact';
 }
+// Add to existing preview.js
+
+function goDashboard() {
+  window.location.href = 'dashboard.html';
+}
+
+function goHistory() {
+  window.location.href = 'history.html';
+}

@@ -4,17 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>FreshInsight - Result</title>
-
-  <!-- Reuse preview.css so header matches perfectly -->
   <link rel="stylesheet" href="preview.css">
   <link rel="stylesheet" href="result.css">
-
   <link href="https://fonts.googleapis.com/css2?family=Italiana&display=swap" rel="stylesheet">
 </head>
 
 <body>
-
-  <!-- SAME HEADER AS PREVIEW.HTML -->
+  <!-- HEADER -->
   <header class="site-header">
     <div class="top-bar">
       <img src="Logo.png" alt="Brand Logo" class="brand-logo">
@@ -29,37 +25,63 @@
 
     <div class="info-btn">
       <button class="nav-btn" onclick="goHome()">Home</button>
+      <button class="nav-btn" onclick="goDashboard()">Dashboard</button>
+      <button class="nav-btn" onclick="goHistory()">History</button>
       <button class="nav-btn" onclick="goContact()">Contact</button>
     </div>
 
     <div id="infoBox" class="info-box"></div>
   </header>
 
-  <!-- RESULT BOX -->
+  <!-- RESULT CONTAINER -->
   <div class="result-container">
     <div class="image-section">
       <h2>Uploaded Image</h2>
 
-      <!-- FIXED IMAGE FRAME --> 
+      <!-- IMAGE PREVIEW -->
       <img id="resultImage" alt="Uploaded preview" style="
-      width: 300px;
-      height: 230px;
-      object-fit: cover;
-      border-radius: 12px;
-      background: #eee;
+        width: 300px;
+        height: 230px;
+        object-fit: cover;
+        border-radius: 12px;
+        background: #eee;
       " />
 
+      <!-- PREDICTION BOX -->
       <div id="predictionBox" class="prediction-box">
         Loading prediction...
       </div>
 
+      <!-- ✅ IoT SECTION -->
+      <div id="iotSection" class="iot-section" style="display:none;">
+        <h3>📡 Add Environmental Data</h3>
+        <button class="action-btn" onclick="readSensor()">Read IoT Sensor (ESP32)</button>
+        
+        <div id="sensorData" style="display:none; margin-top: 10px;">
+          <p><strong>Temperature:</strong> <span id="tempValue">-</span> °C</p>
+          <p><strong>Humidity:</strong> <span id="humValue">-</span> %</p>
+        </div>
+      </div>
+
+      <!-- ✅ SHELF LIFE DISPLAY -->
+      <div id="shelfLifeBox" class="shelf-life-box" style="display:none;">
+        <h3>📦 Estimated Shelf Life</h3>
+        <p id="shelfLifeValue" class="shelf-life-value">-</p>
+        <p class="shelf-life-note">Based on ripeness and environmental conditions</p>
+      </div>
+
+      <!-- ACTION BUTTONS -->
       <button class="action-btn" onclick="scanAnotherImage()">Scan Another Image</button>
     </div>
   </div>
 
-  <!-- JS FILES -->
+  <!-- LOADING OVERLAY -->
+  <div id="loadingOverlay" class="loading-overlay" style="display:none;">
+    <div class="spinner"></div>
+    <p>Reading sensor data...</p>
+  </div>
+
   <script src="preview.js"></script>
   <script src="result.js"></script>
-
 </body>
 </html>
