@@ -8,7 +8,7 @@ RIPENESS_CLASSES = ['Unripe', 'Ripe', 'Overripe']
 FRUIT_TYPES = ['Apple', 'Orange']
 
 def load_model():
-    model_path = 'fruit_ripeness_multitask_finetuned.keras'
+    model_path = 'fruit_ripeness_with_person_rejection.keras'
     return tf.keras.models.load_model(model_path)
 
 model = load_model()

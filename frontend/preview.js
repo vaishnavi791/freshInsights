@@ -1,114 +1,159 @@
-// Header icon actions
-const mailIcon = document.getElementById('mailIcon');
-const githubIcon = document.getElementById('githubIcon');
-const linkedinIcon = document.getElementById('linkedinIcon');
-const infoBox = document.getElementById('infoBox');
+let uploadedFile = null;
+let cameraStream = null;
+let capturedImageBlob = null;
 
-mailIcon.addEventListener('click', () => {
-  infoBox.style.display = 'block';
-  infoBox.innerHTML = '✉︎ freshInsight9@gmail.com';
-});
-
-githubIcon.addEventListener('click', () => {
-  infoBox.style.display = 'block';
-  infoBox.innerHTML = `<a href="https://github.com/vaishnavi791/freshInsights" target="_blank">🐱 GitHub Project Link</a>`;
-});
-
-linkedinIcon.addEventListener('click', () => {
-  window.location.href = 'team-member.html';  // Your team member page
-});
-
-function goHome() {
-  window.location.href = "index.html"; // homepage
-}
-function goContact() {
-  const contactSection = document.getElementById("contact");
-  if (contactSection) {
-    contactSection.scrollIntoView({ behavior: "smooth" });
-  } else {
-    // fallback if not on homepage → redirect to homepage#contact
-    window.location.href = "index.html#contact";
+// Handle file upload
+document.getElementById('uploadFile').addEventListener('change', function(e) {
+  uploadedFile = e.target.files[0];
+  capturedImageBlob = null;
+  
+  if (uploadedFile) {
+    // Show preview
+    const reader = new FileReader();
+    reader.onload = function(event) {
+      const previewImg = document.getElementById('imagePreview');
+      const previewContainer = document.getElementById('imagePreviewContainer');
+      
+      if (previewImg && previewContainer) {
+        previewImg.src = event.target.result;
+        previewContainer.style.display = 'block';
+      }
+    };
+    reader.readAsDataURL(uploadedFile);
   }
-}let stream;
-let capturedImage = null;
+});
 
 // Open camera
-function openCamera() {
-  const video = document.getElementById("cameraFeed");
-  navigator.mediaDevices.getUserMedia({ video: true })
-    .then(mediaStream => {
-      stream = mediaStream;
-      video.srcObject = mediaStream;
-      video.style.display = "block";
-
-      // Listen for Enter key to capture the image
-      document.addEventListener("keydown", enterCapture);
-    })
-    .catch(err => {
-      alert("Camera access denied!");
-      console.error(err);
+async function openCamera() {
+  const video = document.getElementById('cameraFeed');
+  try {
+    cameraStream = await navigator.mediaDevices.getUserMedia({ 
+      video: { width: 640, height: 480 } 
     });
-}
-
-// Function triggered on Enter key
-function enterCapture(event) {
-  if(event.key === "Enter") {
-    captureImage();
+    video.srcObject = cameraStream;
+    video.style.display = 'block';
+    addCaptureButton();
+  } catch (err) {
+    alert('Camera access denied: ' + err.message);
   }
 }
 
-// Capture current frame from video
-function captureImage() {
-  const video = document.getElementById("cameraFeed");
-  if (!video.srcObject) return alert("Camera not started!");
+function addCaptureButton() {
+  if (document.getElementById('captureBtn')) return;
+  
+  const video = document.getElementById('cameraFeed');
+  const captureBtn = document.createElement('button');
+  captureBtn.id = 'captureBtn';
+  captureBtn.className = 'action-btn';
+  captureBtn.textContent = 'Capture Photo';
+  captureBtn.onclick = captureFromCamera;
+  video.parentNode.insertBefore(captureBtn, video.nextSibling);
+}
 
-  const canvas = document.createElement("canvas");
+function captureFromCamera() {
+  const video = document.getElementById('cameraFeed');
+  const canvas = document.createElement('canvas');
   canvas.width = video.videoWidth;
   canvas.height = video.videoHeight;
-  const ctx = canvas.getContext("2d");
+  
+  const ctx = canvas.getContext('2d');
   ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-  capturedImage = canvas.toDataURL("image/png");
-
-  // Stop camera
-  if(stream) stream.getTracks().forEach(track => track.stop());
-  video.style.display = "none";
-
-  // Remove Enter listener so it doesn’t trigger again
-  document.removeEventListener("keydown", enterCapture);
-
-  // Save and redirect
-  localStorage.setItem("capturedImage", capturedImage);
-  window.location.href = "result.html";
+  
+  canvas.toBlob(function(blob) {
+    capturedImageBlob = blob;
+    uploadedFile = null;
+    
+    // Show preview
+    const previewImg = document.getElementById('imagePreview');
+    const previewContainer = document.getElementById('imagePreviewContainer');
+    if (previewImg && previewContainer) {
+      previewImg.src = URL.createObjectURL(blob);
+      previewContainer.style.display = 'block';
+    }
+    
+    if (cameraStream) {
+      cameraStream.getTracks().forEach(track => track.stop());
+      video.style.display = 'none';
+    }
+    
+    const captureBtn = document.getElementById('captureBtn');
+    if (captureBtn) captureBtn.remove();
+    
+    alert('Photo captured! Click Submit to analyze.');
+  }, 'image/jpeg', 0.95);
 }
 
-// Retake / stop camera
 function retakeImage() {
-  const video = document.getElementById("cameraFeed");
-  if (stream) {
-    stream.getTracks().forEach(track => track.stop());
-    video.style.display = "none";
-    capturedImage = null;
+  uploadedFile = null;
+  capturedImageBlob = null;
+  document.getElementById('uploadFile').value = '';
+  
+  const previewContainer = document.getElementById('imagePreviewContainer');
+  if (previewContainer) previewContainer.style.display = 'none';
+  
+  if (cameraStream) {
+    cameraStream.getTracks().forEach(track => track.stop());
+    document.getElementById('cameraFeed').style.display = 'none';
   }
+  
+  const captureBtn = document.getElementById('captureBtn');
+  if (captureBtn) captureBtn.remove();
 }
 
-// Upload file
-document.getElementById("uploadFile").addEventListener("change", function(e){
-  const file = e.target.files[0];
-  if (!file) return;
-
-  const reader = new FileReader();
-  reader.onload = function(){
-    capturedImage = reader.result;
-    localStorage.setItem("capturedImage", capturedImage);  // <-- FIXED
-  }
-  reader.readAsDataURL(file);
-});
-// Submit button for upload
-function submitImage() {
-  if (!capturedImage) {
-    alert("Please upload or capture an image first!");
+// Submit image to backend
+async function submitImage() {
+  if (!uploadedFile && !capturedImageBlob) {
+    alert('Please upload or capture an image first!');
     return;
   }
-  localStorage.setItem("capturedImage", capturedImage);
-  window.location.href = "result.html";
+
+  const formData = new FormData();
+  
+  if (uploadedFile) {
+    formData.append('image', uploadedFile);
+  } else if (capturedImageBlob) {
+    formData.append('image', capturedImageBlob, 'captured-photo.jpg');
+  }
+
+  try {
+    const response = await fetch('http://127.0.0.1:5000/predict', {
+      method: 'POST',
+      body: formData
+    });
+
+    if (!response.ok) {
+      throw new Error(`Server error: ${response.status}`);
+    }
+
+    const result = await response.json();
+    
+    // Store prediction result
+    sessionStorage.setItem('predictionResult', JSON.stringify(result));
+    
+    // Store image as base64 for result page
+    const reader = new FileReader();
+    reader.onloadend = function() {
+      sessionStorage.setItem('uploadedImage', reader.result);
+      window.location.href = 'result.html';
+    };
+    
+    // Read as base64 data URL
+    if (uploadedFile) {
+      reader.readAsDataURL(uploadedFile);
+    } else if (capturedImageBlob) {
+      reader.readAsDataURL(capturedImageBlob);
+    }
+    
+  } catch (error) {
+    console.error('Error:', error);
+    alert('Failed to get prediction: ' + error.message);
+  }
+}
+
+function goHome() {
+  window.location.href = 'index.html';
+}
+
+function goContact() {
+  window.location.href = 'index.html#contact';
 }
