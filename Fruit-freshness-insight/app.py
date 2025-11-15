@@ -1,22 +1,14 @@
-# app.py
+# app.py - FINAL ROBUST VERSION
 import cv2
 import numpy as np
 import tensorflow as tf
 from PIL import Image
 
-# app.py - CORRECTED VERSION
-import cv2
-import numpy as np
-import tensorflow as tf
-from PIL import Image
-
-# ✅ FIXED: Alphabetical order to match folder scanning
-RIPENESS_CLASSES = ['Overripe', 'Ripe', 'Unripe', 'Not Fruit']
-#                    0          1       2         3
+RIPENESS_CLASSES = ['Unripe', 'Ripe', 'Overripe', 'Not Fruit']
 FRUIT_TYPES = ['Apple', 'Orange']
 
 def load_model():
-    model_path = 'fruit_ripeness_with_person_rejection.keras'
+    model_path = 'fruit_ripeness_with_person_rejection_IMPROVED.keras'
     return tf.keras.models.load_model(model_path)
 
 model = load_model()
@@ -38,28 +30,46 @@ def get_prediction(image_pil):
     ripeness_probs = predictions[0][0]
     fruit_probs = predictions[1][0]
     
-    # ✅ DEBUG: Print raw probabilities
-    print("\n" + "="*50)
-    print("🔍 RAW MODEL PREDICTIONS:")
-    print("="*50)
-    for i, cls in enumerate(RIPENESS_CLASSES):
-        print(f"  {cls:12} -> {ripeness_probs[i]:.4f} ({ripeness_probs[i]*100:.2f}%)")
-    print("\nFruit Type Predictions:")
-    for i, cls in enumerate(FRUIT_TYPES):
-        print(f"  {cls:12} -> {fruit_probs[i]:.4f} ({fruit_probs[i]*100:.2f}%)")
-    print("="*50 + "\n")
+    # ✅ CONSERVATIVE BOOST: Only 15% (was 40%)
+    OVERRIPE_BOOST = 1.15
+    adjusted_probs = ripeness_probs.copy()
+    adjusted_probs[2] *= OVERRIPE_BOOST
+    adjusted_probs /= adjusted_probs.sum()
     
-    ripeness_idx = int(np.argmax(ripeness_probs))
+    ripeness_idx = int(np.argmax(adjusted_probs))
     fruit_idx = int(np.argmax(fruit_probs))
     
     ripeness = RIPENESS_CLASSES[ripeness_idx]
-    ripeness_conf = float(ripeness_probs[ripeness_idx])
+    ripeness_conf = float(adjusted_probs[ripeness_idx])
     
-    # ✅ DEBUG: Print final decision
-    print(f"✅ FINAL DECISION: {FRUIT_TYPES[fruit_idx]} - {ripeness}")
+    # ✅ ONLY override if model is VERY confident about overripe
+    # AND the confidence gap is significant
+    if ripeness_idx == 2:  # Model says Overripe
+        # Check if model is confident (>90%)
+        if ripeness_conf > 0.90:
+            print(f"✅ High confidence overripe: {ripeness_conf*100:.1f}%")
+        else:
+            # Check the margin between Overripe and Ripe
+            ripe_prob = adjusted_probs[1]
+            overripe_prob = adjusted_probs[2]
+            margin = overripe_prob - ripe_prob
+            
+            print(f"🔍 Borderline case:")
+            print(f"   Ripe: {ripe_prob*100:.1f}%")
+            print(f"   Overripe: {overripe_prob*100:.1f}%")
+            print(f"   Margin: {margin*100:.1f}%")
+            
+            # ✅ If margin is small (<15%), trust the model's original prediction
+            # This avoids forcing overripe on borderline cases
+            if margin < 0.15:
+                # Use ORIGINAL probabilities (without boost)
+                orig_ripeness_idx = int(np.argmax(ripeness_probs))
+                if orig_ripeness_idx == 1:  # Original was Ripe
+                    ripeness = 'Ripe'
+                    ripeness_conf = float(ripeness_probs[1])
+                    print(f"   ↩️ Reverting to Ripe (small margin)")
     
-    # Check if "Not Fruit" detected
-    if ripeness_idx == 3:  # Not Fruit
+    if ripeness_idx == 3:
         return {
             'is_fruit': False,
             'ripeness': ripeness,
@@ -72,12 +82,10 @@ def get_prediction(image_pil):
     else:
         return {
             'is_fruit': True,
-            'ripeness': RIPENESS_CLASSES[ripeness_idx],
+            'ripeness': ripeness,
             'ripeness_conf': ripeness_conf,
             'fruit': FRUIT_TYPES[fruit_idx],
             'fruit_conf': float(fruit_probs[fruit_idx]),
             'ripeness_probs': ripeness_probs.tolist(),
             'fruit_probs': fruit_probs.tolist()
         }
-
-
